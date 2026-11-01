@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Recipes</h1>
+<div class="row">
+    {% for recipe in recipes %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if recipe.image %}
+                <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text">{{ recipe.description|truncatewords:20 }}</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No recipes yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center text-white p-5 mb-4" style="background: url('/media/home/IMG_5634.jpg') center/cover no-repeat; min-height: 70vh; border-radius: 12px;">
+    <div style="background: rgba(0,0,0,0.45); padding: 4rem 1rem; border-radius: 12px;">
+        <h1 class="display-4 fw-bold">Welcome to Soap Makers Hub</h1>
+        <p class="lead">Handmade cold process soaps</p>
+        <a class="btn btn-warning btn-lg mt-3" href="{% url 'product-list' %}">See the shop</a>
+    </div>
+</div>
+{% endblock %}
