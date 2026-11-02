@@ -30,8 +30,8 @@ def create_checkout_session(request):
     session = stripe.checkout.Session.create(
         line_items=line_items,
         mode="payment",
-        success_url=request.build_absolute_uri("/checkout/success/"),
-        cancel_url=request.build_absolute_uri("/checkout/cancel/"),
+        success_url=f"{request.scheme}://{request.get_host()}/checkout/success/",
+        cancel_url=f"{request.scheme}://{request.get_host()}/checkout/cancel/",
     )
     return redirect(session.url, code=303)
 
