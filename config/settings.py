@@ -10,22 +10,31 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load secret settings from env.py (ignored by git) when it exists
+if os.path.isfile(BASE_DIR / "env.py"):
+    import env  # noqa: F401
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-yfzp4!48f8w+f0r!!=&-@nwh1o51wojmof56(2t^j=mpz@^mo^"
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host
+    for host in os.environ.get("ALLOWED_HOSTS", "").split(",")
+    if host
+]
 
 
 # Application definition
@@ -135,6 +144,18 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # Stripe (test keys – replace with your own later)
-import os
 STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY", "")
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.app.github.dev",
+    "http://localhost:8000",
+    "https://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://127.0.0.1:8000",
+    "http://localhost",
+    "http://127.0.0.1",
+]

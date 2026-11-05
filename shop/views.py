@@ -12,6 +12,8 @@ def product_detail(request, pk):
     return render(request, "shop/detail.html", {"product": product})
 
 @login_required
+
+
 def add_to_cart(request, pk):
     product = get_object_or_404(Product, pk=pk)
     cart_item, created = Cart.objects.get_or_create(
@@ -27,6 +29,8 @@ def add_to_cart(request, pk):
 
 
 @login_required
+
+
 def cart_view(request):
     items = list(Cart.objects.filter(user=request.user))
     grand_total = 0

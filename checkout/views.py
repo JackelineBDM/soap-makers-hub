@@ -9,6 +9,8 @@ from .models import Order, OrderItem
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
+
+
 def create_checkout_session(request):
     cart_items = Cart.objects.filter(user=request.user)
     if not cart_items.exists():
@@ -39,6 +41,8 @@ def create_checkout_session(request):
     return redirect(session.url, code=303)
 
 @login_required
+
+
 def success(request):
     # Create order and clear cart (simple version)
     cart_items = Cart.objects.filter(user=request.user)
@@ -56,5 +60,7 @@ def success(request):
     return render(request, "checkout/success.html")
 
 @login_required
+
+
 def cancel(request):
     return render(request, "checkout/cancel.html")
