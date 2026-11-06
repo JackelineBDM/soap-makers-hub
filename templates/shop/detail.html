@@ -1,29 +1,41 @@
 {% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-6">
         {% if product.image %}
-            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+            <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
         {% endif %}
     </div>
     <div class="col-md-6">
         <p><a href="{% url 'product-list' %}">&larr; Back to shop</a></p>
         <h1>{{ product.name }}</h1>
         <p>{{ product.description }}</p>
-        <p class="fw-bold fs-4">£{{ product.price }}</p>
-        <p>Stock: {{ product.stock }}</p>
-        {% if user.is_authenticated %}
+        <p class="fw-bold fs-4">&pound;{{ product.price }}</p>
+        {% if product.stock > 0 %}
+            <p>{{ product.stock }} in stock</p>
+            {% if user.is_authenticated %}
             <form method="post" action="{% url 'add-to-cart' product.pk %}">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="quantity" class="form-label">Quantity</label>
-                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" style="width: 100px;">
+                <label for="quantity" class="form-label">Quantity</label>
+                <div class="input-group product-quantity mb-3">
+                    <button class="btn btn-outline-dark" type="button" data-quantity-step="-1" aria-label="One fewer">&minus;</button>
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}" data-price="{{ product.price }}" class="form-control text-center">
+                    <button class="btn btn-outline-dark" type="button" data-quantity-step="1" aria-label="One more">+</button>
                 </div>
+                <p>Total: <strong id="live-total">&pound;{{ product.price }}</strong></p>
                 <button class="btn btn-warning" type="submit">Add to cart</button>
             </form>
+            {% else %}
+            <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> or <a href="{% url 'register' %}">register</a> to add this soap to your cart.</p>
+            {% endif %}
         {% else %}
-            <p><a href="{% url 'login' %}">Log in</a> to add to cart.</p>
+            <p class="text-danger fw-bold">Sold out</p>
         {% endif %}
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'js/product.js' %}"></script>
 {% endblock %}

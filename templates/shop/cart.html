@@ -45,7 +45,7 @@
         </table>
     </div>
     <p class="fw-bold fs-5">Grand total: £{{ grand_total }}</p>
-    <form method="post" action="{% url 'create-checkout' %}" class="d-inline">
+    <form method="post" action="{% url 'create-checkout' %}" class="d-inline" data-busy-message="Taking you to Stripe...">
         {% csrf_token %}
         <button class="btn btn-warning btn-lg me-2" type="submit">Checkout with Stripe</button>
     </form>

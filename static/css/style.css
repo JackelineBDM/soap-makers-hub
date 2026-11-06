@@ -1,0 +1,76 @@
+/* Soap Makers Hub - custom styles (Bootstrap is loaded separately) */
+
+/* ---- Brand colours ---- */
+:root {
+    --brand-brown: #5c4033;
+    --brand-cream: #f8f4ef;
+}
+
+/* ---- Page layout ---- */
+body {
+    background: var(--brand-cream);
+}
+
+.skip-link {
+    position: absolute;
+    z-index: 1100;
+    padding: 0.5rem 1rem;
+    background: #fff;
+}
+
+/* ---- Navigation and footer ---- */
+.site-navbar,
+.site-footer {
+    background: var(--brand-brown);
+    color: var(--brand-cream);
+}
+
+.site-navbar .nav-link,
+.site-navbar .navbar-brand,
+.site-navbar .navbar-text {
+    color: var(--brand-cream);
+}
+
+.site-navbar .nav-link:hover,
+.site-navbar .nav-link:focus {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* ---- Home page hero ---- */
+.hero {
+    min-height: 60vh;
+    border-radius: 12px;
+    background: url("../images/hero-soaps.jpg") center / cover no-repeat;
+}
+
+.hero-overlay {
+    padding: 4rem 1rem;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+/* ---- Cards, tables and forms ---- */
+.card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cart-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+.quantity-input {
+    width: 90px;
+}
+
+.product-quantity {
+    max-width: 180px;
+}
+
+.star-rating {
+    color: #8a5a00;
+    letter-spacing: 0.1em;
+}

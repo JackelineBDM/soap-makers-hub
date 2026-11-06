@@ -1,8 +1,9 @@
-{% extends "base.html" %}
+% extends "base.html" %}
+{% block title %}Payment cancelled{% endblock %}
 {% block content %}
 <div class="text-center my-5">
     <h1>Payment cancelled</h1>
-    <p>You can try again any time.</p>
+    <p>You have not been charged. Your cart is still saved, so you can try again any time.</p>
     <a class="btn btn-outline-dark" href="{% url 'cart' %}">Back to cart</a>
 </div>
-{% endblock %}
+{% endblock %}clear
