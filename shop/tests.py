@@ -88,8 +88,6 @@ class CartPageTests(CartTestCase):
         response = self.client.get(reverse("cart"))
         self.assertEqual(float(response.context["grand_total"]), 9.00)
 
-        cat >> shop/tests.py <<'EOF'
-
 
 class PageTests(CartTestCase):
     """Smoke tests: every public page loads and has the right links."""
