@@ -3,8 +3,10 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+
 class RegisterForm(UserCreationForm):
     """Sign-up form that also asks for a unique email address."""
+
     email = forms.EmailField(required=True)
 
     class Meta:
@@ -19,4 +21,3 @@ class RegisterForm(UserCreationForm):
                 "An account with this email already exists."
             )
         return email
-        

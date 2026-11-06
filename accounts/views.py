@@ -2,7 +2,9 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
+
 from .forms import RegisterForm
+
 
 def register(request):
     """Create an account and log the new customer straight in."""
