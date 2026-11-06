@@ -5,26 +5,24 @@ Django settings for config project.
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Read secrets from the .env file (ignored by git) or the host's settings
+load_dotenv(BASE_DIR / ".env")
 
 # Read secrets from env.py when it exists
 if os.path.isfile(BASE_DIR / "env.py"):
     import env  # noqa: F401
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-development-key-12345")
-DEBUG = os.environ.get("DEBUG", "True").lower() in ("true", "1", "t")
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 
-# Default allowed hosts for local development and Codespaces
-raw_hosts = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,.github.dev,.app.github.dev")
-ALLOWED_HOSTS = [host.strip() for host in raw_hosts.split(",") if host.strip()]
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-CSRF_TRUSTED_ORIGINS = [
-    origin
-    for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
-    if origin
+ALLOWED_HOSTS = [
+    host for host in os.environ.get("ALLOWED_HOSTS", "").split(",") if host
 ]
-
 
 # Application definition
 
