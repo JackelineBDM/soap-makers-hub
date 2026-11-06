@@ -87,3 +87,34 @@ class CartPageTests(CartTestCase):
         Cart.objects.create(user=self.user, product=self.product, quantity=2)
         response = self.client.get(reverse("cart"))
         self.assertEqual(float(response.context["grand_total"]), 9.00)
+
+        cat >> shop/tests.py <<'EOF'
+
+
+class PageTests(CartTestCase):
+    """Smoke tests: every public page loads and has the right links."""
+
+    def test_pages_load_for_anonymous_visitors(self):
+        self.client.logout()
+        for name, args in (("home", []), ("product-list", []),
+                           ("product-detail", [self.product.pk]),
+                           ("recipe-list", []), ("login", []),
+                           ("register", [])):
+            response = self.client.get(reverse(name, args=args))
+            self.assertEqual(response.status_code, 200, name)
+
+    def test_menu_shows_login_links_when_logged_out(self):
+        self.client.logout()
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, reverse("login"))
+        self.assertContains(response, reverse("register"))
+
+    def test_menu_shows_logout_when_logged_in(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "Log out")
+
+    def test_message_is_shown_after_adding_to_cart(self):
+        response = self.client.post(
+            self.add_url, {"quantity": 2}, follow=True
+        )
+        self.assertContains(response, "added to your cart")
