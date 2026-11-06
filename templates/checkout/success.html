@@ -1,8 +1,32 @@
 {% extends "base.html" %}
+{% block title %}Order confirmed{% endblock %}
 {% block content %}
-<div class="text-center my-5">
+<div class="my-4">
     <h1>Thank you!</h1>
-    <p>Your payment was successful. Your order has been saved.</p>
+    <p>Your payment was successful. Your order number is <strong>#{{ order.pk }}</strong>.</p>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>£{{ item.price }}</td>
+                    <td>£{{ item.line_total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="fw-bold fs-5">Order total: £{{ order.total }}</p>
     <a class="btn btn-warning" href="{% url 'product-list' %}">Continue shopping</a>
 </div>
 {% endblock %}
