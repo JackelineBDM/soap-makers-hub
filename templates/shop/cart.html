@@ -1,15 +1,17 @@
 {% extends "base.html" %}
+{% block title %}Your cart{% endblock %}
 {% block content %}
 <h1>Your cart</h1>
 {% if items %}
     <div class="table-responsive">
-        <table class="table">
+        <table class="table align-middle">
             <thead>
                 <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Total</th>
+                    <th scope="col"><span class="visually-hidden">Remove</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -17,24 +19,38 @@
                 <tr>
                     <td>
                         {% if item.product.image %}
-                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 60px; height: 60px; object-fit: cover;" class="me-2">
+                            <img src="{{ item.product.image.url }}" alt="" class="cart-thumb me-2">
                         {% endif %}
                         {{ item.product.name }}
                     </td>
-                    <td>{{ item.quantity }}</td>
+                    <td>
+                        <form method="post" action="{% url 'update-cart-item' item.pk %}" class="d-flex gap-2">
+                            {% csrf_token %}
+                            <label class="visually-hidden" for="qty-{{ item.pk }}">Quantity for {{ item.product.name }}</label>
+                            <input class="form-control quantity-input" id="qty-{{ item.pk }}" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}">
+                            <button class="btn btn-sm btn-outline-dark" type="submit">Update</button>
+                        </form>
+                    </td>
                     <td>£{{ item.product.price }}</td>
                     <td>£{{ item.line_total }}</td>
+                    <td>
+                        <form method="post" action="{% url 'remove-cart-item' item.pk %}">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     <p class="fw-bold fs-5">Grand total: £{{ grand_total }}</p>
+    <form method="post" action="{% url 'create-checkout' %}" class="d-inline">
+        {% csrf_token %}
+        <button class="btn btn-warning btn-lg me-2" type="submit">Checkout with Stripe</button>
+    </form>
 {% else %}
     <p>Your cart is empty.</p>
 {% endif %}
-<p class="mt-3">
-        <a class="btn btn-warning btn-lg me-2" href="{% url 'create-checkout' %}">Checkout with Stripe</a>
-        <a class="btn btn-outline-dark" href="{% url 'product-list' %}">Continue shopping</a>
-    </p>
+<a class="btn btn-outline-dark" href="{% url 'product-list' %}">Continue shopping</a>
 {% endblock %}
