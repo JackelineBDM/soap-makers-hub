@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
+
 class RegisterTests(TestCase):
     """Registration rules."""
 
@@ -34,6 +35,7 @@ class RegisterTests(TestCase):
         for name in ("register", "login"):
             response = self.client.get(reverse(name))
             self.assertEqual(response.status_code, 302, name)
+
 
 class LogoutTests(TestCase):
     """Logging out."""
