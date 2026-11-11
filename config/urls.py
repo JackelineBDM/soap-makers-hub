@@ -9,6 +9,7 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("accounts/", include("accounts.urls")),
     path("recipes/", include("recipes.urls")),
+    path("reviews/", include("reviews.urls")),
     path("shop/", include("shop.urls")),
     path("checkout/", include("checkout.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
