@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ recipe.title }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'recipe-list' %}">&larr; All recipes</a></p>
+<h1>{{ recipe.title }}</h1>
+<p>{{ recipe.description }}</p>
+
+{% if can_read %}
+<section aria-labelledby="ingredients-title">
+    <h2 id="ingredients-title" class="h4">Ingredients</h2>
+    <p>{{ recipe.ingredients|linebreaksbr }}</p>
+</section>
+<section aria-labelledby="method-title">
+    <h2 id="method-title" class="h4">Method</h2>
+    <p>{{ recipe.instructions|linebreaksbr }}</p>
+</section>
+{% else %}
+<div class="alert alert-secondary">
+    <p class="mb-2">The ingredients and method are part of our premium recipes.</p>
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'recipe-buy' recipe.pk %}" data-busy-message="Taking you to Stripe...">
+        {% csrf_token %}
+        <button class="btn btn-warning" type="submit">Unlock for &pound;{{ recipe.price }}</button>
+    </form>
+    {% else %}
+    <p class="mb-0"><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> or <a href="{% url 'register' %}">register</a> to unlock this recipe.</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
