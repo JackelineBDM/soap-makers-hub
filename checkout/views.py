@@ -3,18 +3,15 @@ import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
 from shop.models import Cart
-
 from .models import Order
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
 
 @login_required
 @require_POST
@@ -34,9 +31,7 @@ def create_checkout_session(request):
                 "Please update your cart.",
             )
             return redirect("cart")
-
     order = Order.create_from_cart(request.user, cart_items)
-    # Prices come from our database, never from the browser
     line_items = [{
         "price_data": {
             "currency": "gbp",
@@ -53,7 +48,6 @@ def create_checkout_session(request):
             shipping_address_collection={
                 "allowed_countries": ["GB", "IE", "US", "CA"]
             },
-            # Stripe swaps in the real session id when it redirects back
             success_url=success_url + "?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=request.build_absolute_uri(reverse("checkout-cancel")),
             metadata={"order_id": order.pk},
@@ -66,11 +60,9 @@ def create_checkout_session(request):
             "You have not been charged. Please try again in a moment.",
         )
         return redirect("cart")
-
     order.stripe_id = session.id
     order.save(update_fields=["stripe_id"])
     return redirect(session.url)
-
 
 @login_required
 def success(request):
@@ -79,8 +71,12 @@ def success(request):
     if not session_id:
         messages.warning(request, "No payment was found for that page.")
         return redirect("cart")
-
-    order = get_object_or_404(Order, stripe_id=session_id, user=request.user)
+    try:
+        order = Order.objects.get(stripe_id=session_id)
+    except Order.DoesNotExist:
+        raise Http404
+    if order.user != request.user:
+        raise Http404
     if not order.paid:
         try:
             session = stripe.checkout.Session.retrieve(session_id)
@@ -98,22 +94,16 @@ def success(request):
         messages.success(request, "Payment received. Thank you!")
     return render(request, "checkout/success.html", {"order": order})
 
-
 @login_required
 def cancel(request):
     """Tell the customer nothing was charged and keep their cart."""
     messages.info(request, "Payment cancelled. Your cart is still saved.")
     return render(request, "checkout/cancel.html")
 
-
 @csrf_exempt
 @require_POST
 def stripe_webhook(request):
-    """Let Stripe tell us about payments even if the customer closes the tab.
-
-    Stripe signs every message. A message without a valid signature is
-    rejected, so nobody can fake a payment by calling this URL.
-    """
+    """Let Stripe tell us about payments."""
     signature = request.META.get("HTTP_STRIPE_SIGNATURE", "")
     try:
         event = stripe.Webhook.construct_event(
@@ -121,7 +111,6 @@ def stripe_webhook(request):
         )
     except (ValueError, stripe.SignatureVerificationError):
         return HttpResponse(status=400)
-
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         if session.get("payment_status") == "paid":
@@ -136,9 +125,13 @@ def order_history(request):
     orders = Order.objects.filter(user=request.user, paid=True)
     return render(request, "checkout/order_history.html", {"orders": orders})
 
-
 @login_required
 def order_detail(request, pk):
     """Show one of the customer's own paid orders."""
-    order = get_object_or_404(Order, pk=pk, user=request.user, paid=True)
+    try:
+        order = Order.objects.get(pk=pk, paid=True)
+    except Order.DoesNotExist:
+        raise Http404
+    if order.user != request.user:
+        raise Http404
     return render(request, "checkout/order_detail.html", {"order": order})

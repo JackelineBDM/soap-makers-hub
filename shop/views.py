@@ -2,18 +2,16 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
 from .forms import CartQuantityForm
 from .models import Cart, Product
-
 
 def product_list(request):
     """Show every product."""
     products = Product.objects.all()
     return render(request, "shop/list.html", {"products": products})
-
 
 def product_detail(request, pk):
     """Show one product with its reviews."""
@@ -30,7 +28,6 @@ def product_detail(request, pk):
         "user_review": user_review,
     })
 
-
 @login_required
 @require_POST
 def add_to_cart(request, pk):
@@ -40,7 +37,6 @@ def add_to_cart(request, pk):
     if not form.is_valid():
         messages.error(request, "Please choose a quantity from 1 to 99.")
         return redirect("product-detail", pk=product.pk)
-
     cart_item, _ = Cart.objects.get_or_create(
         user=request.user, product=product, defaults={"quantity": 0}
     )
@@ -52,7 +48,6 @@ def add_to_cart(request, pk):
         if cart_item.quantity == 0:
             cart_item.delete()
         return redirect("product-detail", pk=product.pk)
-
     cart_item.quantity = new_quantity
     cart_item.save()
     messages.success(
@@ -60,7 +55,6 @@ def add_to_cart(request, pk):
                  "added to your cart."
     )
     return redirect("cart")
-
 
 @login_required
 def cart_view(request):
@@ -77,12 +71,16 @@ def cart_view(request):
         {"items": items, "grand_total": grand_total},
     )
 
-
 @login_required
 @require_POST
 def update_cart_item(request, pk):
     """Change the quantity of one of the user's own cart lines."""
-    item = get_object_or_404(Cart, pk=pk, user=request.user)
+    try:
+        item = Cart.objects.get(pk=pk)
+    except Cart.DoesNotExist:
+        raise Http404
+    if item.user != request.user:
+        raise Http404
     form = CartQuantityForm(request.POST)
     if not form.is_valid():
         messages.error(request, "Please choose a quantity from 1 to 99.")
@@ -96,12 +94,16 @@ def update_cart_item(request, pk):
         messages.success(request, "Cart updated.")
     return redirect("cart")
 
-
 @login_required
 @require_POST
 def remove_cart_item(request, pk):
     """Remove one of the user's own cart lines."""
-    item = get_object_or_404(Cart, pk=pk, user=request.user)
+    try:
+        item = Cart.objects.get(pk=pk)
+    except Cart.DoesNotExist:
+        raise Http404
+    if item.user != request.user:
+        raise Http404
     item.delete()
     messages.success(request, f"{item.product.name} removed from your cart.")
     return redirect("cart")

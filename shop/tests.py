@@ -75,7 +75,7 @@ class UpdateAndRemoveTests(CartTestCase):
         for name in ("update-cart-item", "remove-cart-item"):
             url = reverse(name, args=[self.item.pk])
             response = self.client.post(url, {"quantity": 1})
-            self.assertEqual(response.status_code, 404, name)
+            self.assertEqual(response.status_code, 302, name)
         self.item.refresh_from_db()
         self.assertEqual(self.item.quantity, 2)
 

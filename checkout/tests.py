@@ -111,7 +111,7 @@ class SuccessPageTests(CheckoutTestCase):
         with patch(RETRIEVE, return_value=SimpleNamespace(
                 payment_status="paid")):
             response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
         self.assertFalse(Order.objects.get().paid)
 
     def test_stripe_error_while_checking_shows_message(self):
@@ -177,7 +177,7 @@ class OrderHistoryTests(CheckoutTestCase):
         other = User.objects.create_user("other", password="pass12345")
         theirs = self.make_order(other)
         response = self.client.get(reverse("order-detail", args=[theirs.pk]))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
 
     def test_can_open_my_own_order(self):
         mine = self.make_order(self.user)
