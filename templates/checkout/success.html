@@ -28,5 +28,6 @@
     </div>
     <p class="fw-bold fs-5">Order total: £{{ order.total }}</p>
     <a class="btn btn-warning" href="{% url 'product-list' %}">Continue shopping</a>
+    <a class="btn btn-outline-dark" href="{% url 'order-history' %}">View all my orders</a>
 </div>
 {% endblock %}
