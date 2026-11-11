@@ -1,6 +1,7 @@
 """Views for browsing products and managing the cart."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -15,9 +16,19 @@ def product_list(request):
 
 
 def product_detail(request, pk):
-    """Show one product."""
+    """Show one product with its reviews."""
     product = get_object_or_404(Product, pk=pk)
-    return render(request, "shop/detail.html", {"product": product})
+    reviews = product.reviews.select_related("user")
+    average = reviews.aggregate(Avg("rating"))["rating__avg"]
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = reviews.filter(user=request.user).first()
+    return render(request, "shop/detail.html", {
+        "product": product,
+        "reviews": reviews,
+        "average_rating": average,
+        "user_review": user_review,
+    })
 
 
 @login_required

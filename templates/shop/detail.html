@@ -34,6 +34,41 @@
         {% endif %}
     </div>
 </div>
+
+<section class="mt-5" aria-labelledby="reviews-title">
+    <h2 id="reviews-title">Customer reviews</h2>
+    {% if average_rating %}
+    <p>Average rating: <strong>{{ average_rating|floatformat:1 }}</strong> out of 5 ({{ reviews|length }} review{{ reviews|length|pluralize }})</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        {% if user_review %}
+        <p>You have reviewed this soap.
+            <a href="{% url 'review-edit' user_review.pk %}">Edit</a> or
+            <a href="{% url 'review-delete' user_review.pk %}">delete</a> your review.</p>
+        {% else %}
+        <p><a class="btn btn-outline-dark" href="{% url 'review-add' product.pk %}">Write a review</a></p>
+        {% endif %}
+    {% else %}
+    <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to write a review.</p>
+    {% endif %}
+
+    {% for review in reviews %}
+    <article class="card mb-3">
+        <div class="card-body">
+            <p class="mb-1">
+                <span class="star-rating" aria-hidden="true">{{ review.stars }}</span>
+                <span class="visually-hidden">{{ review.rating }} out of 5 stars</span>
+                <strong>{{ review.user.username }}</strong>
+                <small class="text-muted">{{ review.created_at|date:"j M Y" }}</small>
+            </p>
+            <p class="mb-0">{{ review.comment }}</p>
+        </div>
+    </article>
+    {% empty %}
+    <p>No reviews yet. Be the first!</p>
+    {% endfor %}
+</section>
 {% endblock %}
 {% block extra_js %}
 {% load static %}
