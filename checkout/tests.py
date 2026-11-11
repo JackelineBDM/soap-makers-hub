@@ -150,3 +150,41 @@ class WebhookTests(CheckoutTestCase):
             )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Order.objects.get().paid)
+
+class OrderHistoryTests(CheckoutTestCase):
+    """Customers see their own paid orders and nobody else's."""
+
+    def make_order(self, user, paid=True):
+        """Create an order with one line."""
+        product = Product.objects.get(pk=self.product.pk)
+        order = Order.create_from_cart(
+            user, [Cart(user=user, product=product, quantity=1)]
+        )
+        order.paid = paid
+        order.save()
+        return order
+
+    def test_history_lists_only_my_paid_orders(self):
+        mine = self.make_order(self.user)
+        self.make_order(self.user, paid=False)
+        other = User.objects.create_user("other", password="pass12345")
+        theirs = self.make_order(other)
+        response = self.client.get(reverse("order-history"))
+        self.assertEqual(list(response.context["orders"]), [mine])
+        self.assertNotIn(theirs, response.context["orders"])
+
+    def test_cannot_open_another_users_order(self):
+        other = User.objects.create_user("other", password="pass12345")
+        theirs = self.make_order(other)
+        response = self.client.get(reverse("order-detail", args=[theirs.pk]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_can_open_my_own_order(self):
+        mine = self.make_order(self.user)
+        response = self.client.get(reverse("order-detail", args=[mine.pk]))
+        self.assertContains(response, f"Order #{mine.pk}")
+
+    def test_history_needs_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("order-history"))
+        self.assertEqual(response.status_code, 302)
