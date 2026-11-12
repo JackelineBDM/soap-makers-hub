@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -12,6 +12,7 @@ from shop.models import Cart
 from .models import Order
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 @login_required
 @require_POST
@@ -64,6 +65,7 @@ def create_checkout_session(request):
     order.save(update_fields=["stripe_id"])
     return redirect(session.url)
 
+
 @login_required
 def success(request):
     """Check with Stripe that the payment really happened, then confirm."""
@@ -94,11 +96,13 @@ def success(request):
         messages.success(request, "Payment received. Thank you!")
     return render(request, "checkout/success.html", {"order": order})
 
+
 @login_required
 def cancel(request):
     """Tell the customer nothing was charged and keep their cart."""
     messages.info(request, "Payment cancelled. Your cart is still saved.")
     return render(request, "checkout/cancel.html")
+
 
 @csrf_exempt
 @require_POST
@@ -119,11 +123,13 @@ def stripe_webhook(request):
                 order.mark_as_paid()
     return HttpResponse(status=200)
 
+
 @login_required
 def order_history(request):
     """List the logged-in customer's paid orders, newest first."""
     orders = Order.objects.filter(user=request.user, paid=True)
     return render(request, "checkout/order_history.html", {"orders": orders})
+
 
 @login_required
 def order_detail(request, pk):

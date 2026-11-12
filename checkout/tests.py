@@ -151,6 +151,7 @@ class WebhookTests(CheckoutTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Order.objects.get().paid)
 
+
 class OrderHistoryTests(CheckoutTestCase):
     """Customers see their own paid orders and nobody else's."""
 

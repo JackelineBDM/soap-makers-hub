@@ -8,10 +8,12 @@ from django.views.decorators.http import require_POST
 from .forms import CartQuantityForm
 from .models import Cart, Product
 
+
 def product_list(request):
     """Show every product."""
     products = Product.objects.all()
     return render(request, "shop/list.html", {"products": products})
+
 
 def product_detail(request, pk):
     """Show one product with its reviews."""
@@ -27,6 +29,7 @@ def product_detail(request, pk):
         "average_rating": average,
         "user_review": user_review,
     })
+
 
 @login_required
 @require_POST
@@ -52,9 +55,10 @@ def add_to_cart(request, pk):
     cart_item.save()
     messages.success(
         request, f"{form.cleaned_data['quantity']} x {product.name} "
-                 "added to your cart."
+        "added to your cart."
     )
     return redirect("cart")
+
 
 @login_required
 def cart_view(request):
@@ -70,6 +74,7 @@ def cart_view(request):
         request, "shop/cart.html",
         {"items": items, "grand_total": grand_total},
     )
+
 
 @login_required
 @require_POST
@@ -93,6 +98,7 @@ def update_cart_item(request, pk):
         item.save()
         messages.success(request, "Cart updated.")
     return redirect("cart")
+
 
 @login_required
 @require_POST

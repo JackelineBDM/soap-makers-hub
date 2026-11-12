@@ -1,3 +1,1 @@
-from django.db import models
-
-# Create your models here.
+"""Accounts use Django's built-in User, so there are no models."""
