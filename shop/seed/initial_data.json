@@ -1,0 +1,126 @@
+[
+{
+  "model": "shop.product",
+  "pk": 1,
+  "fields": {
+    "name": "Rose & Activated Charcoal",
+    "description": "Handmade cold process soap with rose and activated charcoal",
+    "price": "8.50",
+    "stock": 10,
+    "image": "products/img_5641_2.jpg",
+    "created_at": "2026-11-01T18:11:18.442Z"
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 2,
+  "fields": {
+    "name": "Lavender & Rose Gold",
+    "description": "Handmade soap with lavender and rose",
+    "price": "7.00",
+    "stock": 10,
+    "image": "products/img_5640.jpg",
+    "created_at": "2026-11-01T18:12:13.979Z"
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 3,
+  "fields": {
+    "name": "Turmeric & Chamomile",
+    "description": "Handmade soap with turmeric and chamomile",
+    "price": "6.50",
+    "stock": 10,
+    "image": "products/img_5639.jpg",
+    "created_at": "2026-11-01T18:12:53.264Z"
+  }
+},
+{
+  "model": "recipes.category",
+  "pk": 1,
+  "fields": {
+    "name": "Cold Process",
+    "friendly_name": ""
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 1,
+  "fields": {
+    "category": 1,
+    "title": "Rose & Activated Charcoal",
+    "description": "Handmade cold process soap with rose and activated charcoal.",
+    "ingredients": "Olive oil, coconut oil, shea butter, sodium hydroxide, water, rose essential oil, activated charcoal",
+    "instructions": "Weigh the oils and melt them. Mix the sodium hydroxide with water carefully. Combine the lye solution with the oils and stir until trace. Add the rose essential oil and activated charcoal. Pour into the mould and leave to cure.",
+    "is_premium": false,
+    "price": "7.00",
+    "image": "recipes/img_5641_2.jpg",
+    "created_by": null,
+    "created_at": "2026-11-01T16:41:22.237Z"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 2,
+  "fields": {
+    "category": 1,
+    "title": "Turmeric & Chamomile",
+    "description": "Handmade soap with turmeric and chamomile.",
+    "ingredients": "Olive oil, coconut oil, shea butter, sodium hydroxide, water, turmeric essential oil",
+    "instructions": "Weigh the oils and melt them. Mix the sodium hydroxide with water carefully. Combine the lye solution with the oils and stir until trace. Add the turmeric essential oil . Pour into the mould and leave to cure.",
+    "is_premium": true,
+    "price": "7.00",
+    "image": "recipes/img_5639.jpg",
+    "created_by": null,
+    "created_at": "2026-11-01T16:43:50.340Z"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 3,
+  "fields": {
+    "category": null,
+    "title": "Lavender & Rose",
+    "description": "Handmade soap with lavender and rose",
+    "ingredients": "Olive oil, coconut oil, shea butter, sodium hydroxide, water, rose and lavender essential oil",
+    "instructions": "Weigh the oils and melt them. Mix the sodium hydroxide with water carefully. Combine the lye solution with the oils and stir until trace. Add the rose  and lavender essential oil  Pour into the mould and leave to cure.",
+    "is_premium": false,
+    "price": "0.00",
+    "image": "recipes/img_5636.jpg",
+    "created_by": null,
+    "created_at": "2026-11-01T16:46:02.354Z"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 4,
+  "fields": {
+    "category": null,
+    "title": "Basic Lavender Cold Process Bar",
+    "description": "A simple, gentle everyday cold process soap recipe suitable for beginners.",
+    "ingredients": "300g Olive Oil\r\n150g Coconut Oil\r\n50g Shea Butter\r\n70g Sodium Hydroxide (Lye)\r\n160g Distilled Water\r\n10g Lavender Essential Oil",
+    "instructions": "1. Carefully mix sodium hydroxide into distilled water in a well-ventilated space and let cool to 100°F.\r\n2. Melt coconut oil and shea butter, then combine with olive oil.\r\n3. Pour lye solution into oils and blend with a stick blender until light trace.\r\n4. Stir in lavender essential oil.\r\n5. Pour into mould, insulate for 24 hours, cut into bars, and cure for 4–6 weeks.",
+    "is_premium": false,
+    "price": "0.00",
+    "image": "recipes/screenshot_2026-11-11_at_12.56.25.png",
+    "created_by": null,
+    "created_at": "2026-11-11T12:53:37.108Z"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 5,
+  "fields": {
+    "category": null,
+    "title": "Luxury Honey Oat & Silk Bar",
+    "description": "An ultra-nourishing premium recipe enriched with colloidal oatmeal, raw honey, and tussah silk.",
+    "ingredients": "250g Olive Oil\r\n150g Coconut Oil\r\n75g Sweet Almond Oil\r\n25g Cocoa Butter\r\n72g Sodium Hydroxide (Lye)\r\n150g Goat Milk (Frozen)\r\n1 tbsp Colloidal Oatmeal\r\n1 tbsp Raw Honey\r\nPinch of Tussah Silk",
+    "instructions": "1. Dissolve silk into lye solution prepared with slushy frozen goat milk to avoid scorching.\r\n2. Combine melted oils and butter at 90°F.\r\n3. Add colloidal oatmeal and raw honey directly to warm oils and blend thoroughly.\r\n4. Pour lye-milk solution into oils and bring to medium trace.\r\n5. Pour into log mould and place in freezer for 12 hours to prevent overheating from honey sugars.",
+    "is_premium": true,
+    "price": "3.00",
+    "image": "recipes/screenshot_2026-11-11_at_12.56.20.png",
+    "created_by": null,
+    "created_at": "2026-11-11T12:54:30.467Z"
+  }
+}
+]
