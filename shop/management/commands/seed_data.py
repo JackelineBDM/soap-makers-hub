@@ -51,9 +51,14 @@ class Command(BaseCommand):
                 fields["category"] = categories.get(fields.get("category"))
             else:
                 continue
-            if model.objects.filter(**{key: fields[key]}).exists():
+            obj = model.objects.filter(**{key: fields[key]}).first()
+            if obj is None:
+                obj = model.objects.create(**fields)
+                created += 1
+            elif obj.image:
                 continue
-            obj = model.objects.create(**fields)
-            attach_image(obj, image)
-            created += 1
+            try:
+                attach_image(obj, image)
+            except Exception as error:
+                self.stdout.write(f"Photo failed for {obj}: {error}")
         self.stdout.write(f"Seed finished: {created} new items.")
