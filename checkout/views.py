@@ -117,7 +117,7 @@ def stripe_webhook(request):
         return HttpResponse(status=400)
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        if session.get("payment_status") == "paid":
+        if session["payment_status"] == "paid":
             order = Order.objects.filter(stripe_id=session["id"]).first()
             if order:
                 order.mark_as_paid()

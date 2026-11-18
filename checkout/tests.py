@@ -189,3 +189,40 @@ class OrderHistoryTests(CheckoutTestCase):
         self.client.logout()
         response = self.client.get(reverse("order-history"))
         self.assertEqual(response.status_code, 302)
+
+
+class RealSignatureWebhookTests(CheckoutTestCase):
+    """A genuinely signed Stripe event must not crash the webhook."""
+
+    def test_signed_event_marks_order_paid(self):
+        import hashlib
+        import hmac
+        import json
+        import time
+
+        from django.test import override_settings
+
+        self.start_checkout()
+        payload = json.dumps({
+            "id": "evt_1",
+            "object": "event",
+            "type": "checkout.session.completed",
+            "data": {"object": {
+                "id": "cs_test_123",
+                "object": "checkout.session",
+                "payment_status": "paid",
+            }},
+        })
+        stamp = int(time.time())
+        signature = hmac.new(
+            b"whsec_test", f"{stamp}.{payload}".encode(), hashlib.sha256
+        ).hexdigest()
+        with override_settings(STRIPE_WEBHOOK_SECRET="whsec_test"):
+            response = self.client.post(
+                reverse("stripe-webhook"),
+                payload,
+                content_type="application/json",
+                HTTP_STRIPE_SIGNATURE=f"t={stamp},v1={signature}",
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Order.objects.get().paid)
