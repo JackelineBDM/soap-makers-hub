@@ -50,14 +50,14 @@ Tested on the live site on 16 and 18 November 2026 in Chrome.
 | My orders | Open My orders | Only my own paid orders | Pass |
 | Premium recipe locked | View as a customer | Unlock button, no ingredients | Pass |
 | 404 page | Visit /nonsense/ | Home page with a message | Pass |
-| Declined card | 4000 0000 0000 0002 | Friendly message, no paid order | TO TEST |
-| Review: add | Rating and 10+ characters | Review shown | TO TEST |
-| Review: edit and delete | Use the links | Each works with a message | TO TEST |
-| Short review | Comment of 4 characters | Error message | TO TEST |
-| Edit another user's review | Type its address | 403 page | TO TEST |
-| Another user's order | Type its address | Not shown | TO TEST |
-| Log in page when logged in | Visit /accounts/login/ | Redirected away | TO TEST |
-| Mobile layout | 375px wide in DevTools | No sideways scroll, menu button works | TO TEST |
+| Declined card | 4000 0000 0000 0002 | Friendly message, no paid order | Pass |
+| Review: add | Rating and 10+ characters | Review shown | Pass |
+| Review: edit and delete | Use the links | Each works with a message | Pass |
+| Short review | Comment of 4 characters | Error message | Pass |
+| Edit another user's review | Type its address | 403 page | Pass |
+| Another user's order | Type its address | Not shown | Pass |
+| Log in page when logged in | Visit /accounts/login/ | Redirected away | Pass |
+| Mobile layout | 375px wide in DevTools | No sideways scroll, menu button works | Pass |
 
 ## Bugs found and fixed
 
