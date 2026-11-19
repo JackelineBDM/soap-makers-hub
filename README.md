@@ -64,7 +64,7 @@ A shop on its own is easy to forget, so the recipes give visitors a reason to co
 
 **Accounts**
 - Register, log in and log out with Django's built-in user system.
-- Logged-in visitors are sent away from the login and register pages.
+- Logged-in visitors are sent away from the login page.
 
 **Shop**
 - Soap list with photos and prices. Each soap has its own page with price, stock and quantity buttons.

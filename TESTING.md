@@ -39,7 +39,7 @@ After the first live test payments, Stripe reported 500 errors on the webhook. T
 
 ## Manual testing
 
-Tested on the live site on 16 and 18 November 2026 in Chrome.
+Tested on the live site on 16, 18 and 19 November 2026 in Chrome.
 
 | Feature | Steps | Expected | Result |
 | --- | --- | --- | --- |
