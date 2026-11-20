@@ -27,7 +27,7 @@ Coverage (measured with `coverage run manage.py test` and `coverage report`): 10
 | JavaScript (JSHint) | No warnings | ![product.js](docs/testing/jshint-product.png) ![checkout.js](docs/testing/jshint-checkout.png) |
 | Python (flake8) | No errors | ![flake8](docs/testing/flake8-clean.png) |
 | Lighthouse mobile | Performance 93, Accessibility 95, Best Practices 100, SEO 91 | ![mobile](docs/testing/lighthouse-mobile.png) |
-| Lighthouse desktop | Performance 99, Accessibility 95, Best Practices 100, SEO 91 | ![desktop](docs/testing/lighthouse-desktop.png) |
+| Lighthouse desktop | Performance 99, Accessibility 100, Best Practices 100, SEO 91 | ![desktop](docs/testing/lighthouse-desktop.png) |
 
 The W3C checker found two real problems, which I fixed: skipped heading levels on the shop page (changed `h5` to `h2` with the same look) and a bulleted list inside a paragraph on the register page (switched the form to `as_div`).
 
