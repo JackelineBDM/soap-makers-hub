@@ -33,6 +33,10 @@ The site is for two kinds of visitor:
 
 A shop on its own is easy to forget, so the recipes give visitors a reason to come back. Premium recipes also give the owner a second way to earn money.
 
+**Why a visitor should register:** a free account keeps your cart between visits, keeps your order history, lets you review the soaps you bought, and ties any premium recipe you unlock to your account.
+
+**Value for the owner:** the owner sells soap and sells premium recipes. A visitor cannot get a premium recipe's ingredients and method without paying, because the server checks with Stripe that the payment really happened.
+
 ## User stories
 
 | As a... | I want to... | So that... |
@@ -49,11 +53,40 @@ A shop on its own is easy to forget, so the recipes give visitors a reason to co
 | Shop owner | add, edit and delete soaps, recipes and categories in the admin | I can run the shop without touching code |
 | Shop owner | have one account unable to change another person's data | customers' data stays private |
 
+Each story is tested one by one in [TESTING.md](TESTING.md#user-stories-tested).
+
 ## Design
 
-**Colours:** a warm brown (#5c4033) for the header and footer, a soft cream (#f8f4ef) for the page background, and a yellow for the main buttons. The look is calm and natural, to suit handmade soap. Bootstrap 5 is used for the layout, so the site works on phones, tablets and desktops.
+I planned the design using the five planes of UX design: strategy, scope, structure, skeleton and surface. Each plane below says what I decided and why.
 
-**Wireframes** (desktop and mobile for each page):
+### UX design: the five planes
+
+| Plane | What I decided | Why |
+| --- | --- | --- |
+| Strategy | Two audiences (soap buyers and people who want to learn soap making) and two owner goals (sell soap, earn from premium recipes). | A shop plus recipes gives visitors two reasons to visit, and gives the owner two ways to earn. |
+| Scope | In: accounts, shop, cart, Stripe payment, order history, reviews, free and premium recipes, admin. Left for later: password reset by email, order emails, saved delivery addresses, search. | These are the features the user stories need. The later items need an email service, which I have not set up yet. |
+| Structure | Main menu: Home, Shop, Recipes. Logged-out visitors also see Log in and Register. Logged-in customers see Cart (with an item count), My orders, their name and Log out. Main journey: Shop, then a soap page, then Cart, then Stripe payment, then My orders. Second journey: Recipes, then a recipe page, then unlock. | The menu stays the same on every page, so people always know where they are and how to get back. |
+| Skeleton | Wireframes for the home, shop, product and cart pages at desktop, tablet and mobile sizes (see below). On small screens the menu collapses behind a menu button and the product cards move to one column. | A phone user needs large, simple controls and no sideways scrolling. |
+| Surface | Warm brown (#5c4033) for the header and footer, a soft cream (#f8f4ef) background and yellow main buttons. Photos of real soaps are the main visual. | The look is calm and natural, which suits handmade soap. The yellow button always means the main action on a page. |
+
+### How the design follows UX principles
+
+| Principle | How the site follows it |
+| --- | --- |
+| Information hierarchy | Soap and recipe cards show the photo first, then the name, then the price. Premium recipes carry a clear badge with their price, and free recipes carry a Free badge. Pages use proper headings in order, which the W3C checker confirmed. |
+| User control | Customers choose their own quantity with plus and minus buttons, can edit or delete their own reviews, and can remove items from the cart. Nothing plays or pops up by itself. A visitor who goes to a page that does not exist is sent to the site with a message, without needing the browser's back button. |
+| Consistency | The same menu, footer, button style and message style appear on every page, and every action reports back in the same way. |
+| Feedback and confirmation | Every action shows a message: review added, updated or deleted, form errors, and a declined card. The pay button switches to a busy message after one click, so a payment cannot be sent twice. |
+| Accessibility | Page areas use header, main and footer, there is a skip-to-content link, headings follow the right order, and form errors are written in plain words. Lighthouse Accessibility scores are 95 on mobile and 100 on desktop. |
+
+### Design decisions to note
+
+- **Payment page:** the payment form is Stripe's own page, not one I built. That is deliberate. Card details never touch my server, which is safer than building my own form.
+- **No password reset yet:** a visitor who forgets their password cannot reset it by email, because the site has no email service. This is listed under Future improvements.
+
+### Wireframes
+
+Wireframes for each main page, at desktop, tablet and mobile sizes:
 
 ![Home wireframe](docs/design/wireframe-home.png)
 ![Shop wireframe](docs/design/wireframe-shop.png)
@@ -88,10 +121,10 @@ A shop on its own is easy to forget, so the recipes give visitors a reason to co
 
 **Messages and errors**
 - Success and error messages appear after every action.
-- A friendly "not allowed" page (403) and a 404 handler that returns the visitor to the home page with a message.
+- A friendly "not allowed" page (403) and a 404 handler that returns the visitor to the site with a message.
 
 **Admin**
-- The owner manages soaps, recipes, categories, orders and reviews in the Django admin.
+- The owner manages soaps, recipes, categories, recipe purchases, orders, carts and reviews in the Django admin.
 
 ## Database design
 
@@ -178,7 +211,17 @@ erDiagram
     }
 ```
 
-Order items keep their own copy of the price, so an old order does not change if a soap's price changes later.
+How the models fit together:
+
+- **Product** is the soap for sale. A product can appear in many carts, many order items and many reviews.
+- **Cart** holds one soap and a quantity for one user. It is why a customer's cart is saved between visits.
+- **Order** is one payment by one user. It has many **OrderItems**, one for each soap bought. Each OrderItem keeps its own copy of the price, so an old order does not change if a soap's price changes later.
+- **Review** links one user to one soap with a rating and a comment. Each user can review a soap once.
+- **Category** groups **Recipes**. If a category is deleted, its recipes stay and simply lose their category.
+- **Recipe** can be free or premium (`is_premium`). Premium recipes have a price.
+- **RecipePurchase** links a user to a premium recipe they paid for. Its Stripe payment id is unique, so one payment cannot unlock a recipe twice.
+
+Data that several apps use, such as the User and the Product, is stored once and linked by foreign keys, not copied.
 
 ## Technologies
 
@@ -191,6 +234,8 @@ Order items keep their own copy of the price, so an old order does not change if
 - Render for hosting, GitHub for version control, GitHub Codespaces for development
 - Testing and checks: Django test runner, coverage, flake8, the W3C HTML and CSS validators, JSHint and Lighthouse
 
+HTML, CSS, JavaScript and Python are kept in separate files. The JavaScript files are in `static/js`, linked at the bottom of the page.
+
 ## Testing
 
 All testing, with screenshots, is in [TESTING.md](TESTING.md). In short:
@@ -199,7 +244,9 @@ All testing, with screenshots, is in [TESTING.md](TESTING.md). In short:
 - All five checked pages pass the W3C HTML validator, and the CSS passes the W3C validator.
 - JavaScript passes JSHint, and Python passes flake8.
 - Lighthouse scores are 91 or higher in every category on mobile and desktop.
-- All 15 manual test rows passed on the live site.
+- Every user story is tested one by one.
+- The site was checked in Chrome and Safari, and at desktop, tablet and phone sizes.
+- All manual test rows passed on the live site.
 
 ## Deployment
 
@@ -225,6 +272,8 @@ The site is deployed on Render with a PostgreSQL database.
 
 5. In Stripe, add a webhook endpoint pointing to `https://soap-makers-hub.onrender.com/checkout/webhook/` for the `checkout.session.completed` event.
 6. Deploy. Debug mode is off on the live site.
+
+**Settings for different places:** the database connection and every secret are read from environment variables in one place, `config/settings.py`. A local copy and the live site use the same code with different variable values, so I did not need a separate branch for each. `.env.example` lists the variable names for anyone setting up their own copy.
 
 ## Run it locally
 
@@ -258,7 +307,7 @@ Stripe test card for a successful payment: `4242 4242 4242 4242`, any future dat
 
 ## Credits
 
-- **Frameworks and services:** Django, Bootstrap 5, Stripe, Cloudinary, Render and WhiteNoise.
-- **Learning:** the lessons and walkthroughs from my Gateway Level 5 Diploma course.
+- **Frameworks and services:** [Django](https://www.djangoproject.com/), [Bootstrap 5](https://getbootstrap.com/), [Stripe](https://stripe.com/docs) and its Python library, [Cloudinary](https://cloudinary.com/), [Render](https://render.com/) and [WhiteNoise](https://whitenoise.readthedocs.io/).
+- **Learning:** the lessons and walkthroughs from my Gateway Level 5 Diploma course. No code was copied from the course walkthroughs, from tutorials or from Stack Overflow.
 - **Photos:** The soap, product and home page photos are my own. Two recipe images, for the basic lavender cold process recipe and the luxury honey oat silk bar recipe, were generated with Google Gemini (AI). The wireframes in `docs/design` were created with Claude's help.
 - **Use of AI:** I used Claude, an AI assistant made by Anthropic, throughout this project. It helped me plan the work, explain errors, draft and review code and tests, produce the wireframes, and write the first versions of this README and TESTING.md. I ran, tested and checked everything myself on the live site, and I can explain how the code works.
